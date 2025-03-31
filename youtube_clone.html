@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube</title>
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        body {
+            background: #f9f9f9;
+            color: #030303;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        #top-bar {
+            height: 56px;
+            background: linear-gradient(90deg, #ff0000, #cc0000);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 22px;
+            color: #fff;
+            font-weight: 700;
+            margin-left: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .search-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            margin: 0 16px;
+            max-width: 650px;
+        }
+
+        .search-box {
+            flex: 1;
+            height: 40px;
+            border: none;
+            border-radius: 40px 0 0 40px;
+            padding: 0 12px;
+            font-size: 16px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .search-btn {
+            width: 64px;
+            height: 40px;
+            background: #fff;
+            border: none;
+            border-radius: 0 40px 40px 0;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #fff;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 240px;
+            background: #fff;
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            padding: 12px 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #030303;
+            transition: background 0.3s;
+        }
+
+        .sidebar-item:hover {
+            background: linear-gradient(90deg, #ffebee, #fff);
+        }
+
+        .sidebar-item span {
+            margin-left: 24px;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        /* Main Content */
+        .main-container {
+            margin-left: 240px;
+            padding: 24px;
+            display: flex;
+            transition: margin-left 0.3s ease;
+        }
+
+        .video-section {
+            flex: 2;
+            margin-right: 24px;
+        }
+
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .video-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 12px 0 8px;
+            color: #030303;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .video-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .video-meta {
+            font-size: 13px;
+            color: #606060;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #606060;
+            text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ffeeee, #fff);
+        }
+
+        .action-btn span {
+            margin-left: 8px;
+        }
+
+        .comments-section {
+            margin-top: 24px;
+        }
+
+        .comment-count {
+            font-size: 14px;
+            color: #606060;
+            margin-bottom: 16px;
+        }
+
+        .comment-input {
+            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .comment-input textarea {
+            flex: 1;
+            border: none;
+            border-bottom: 2px solid #ff0000;
+            padding: 8px;
+            font-size: 14px;
+            resize: none;
+            background: #fff;
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .comment {
+            display: flex;
+            margin-bottom: 16px;
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .comment:hover {
+            transform: translateY(-2px);
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .comment-content p {
+            font-size: 13px;
+            color: #030303;
+        }
+
+        .comment-content span {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        /* Related Videos */
+        .related-videos {
+            flex: 1;
+        }
+
+        .video-item {
+            display: flex;
+            margin-bottom: 12px;
+            cursor: pointer;
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .video-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .thumbnail {
+            width: 168px;
+            height: 94px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            border-radius: 4px;
+            margin-right: 8px;
+            position: relative;
+        }
+
+        .video-info h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #030303;
+            margin-bottom: 4px;
+        }
+
+        .video-info p {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            #sidebar {
+                transform: translateX(-240px);
+                width: 200px;
+            }
+
+            .main-container {
+                margin-left: 0;
+                padding: 16px;
+                flex-direction: column;
+            }
+
+            .video-section {
+                margin-right: 0;
+            }
+
+            .search-container {
+                margin: 0 8px;
+            }
+
+            .search-box {
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .search-btn {
+                width: 48px;
+                height: 36px;
+            }
+
+            .related-videos {
+                margin-top: 24px;
+            }
+
+            .video-item {
+                padding: 6px;
+            }
+
+            .thumbnail {
+                width: 120px;
+                height: 67px;
+            }
+
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #top-bar {
+                padding: 0 8px;
+            }
+
+            .logo span {
+                font-size: 18px;
+            }
+
+            .user-actions {
+                gap: 12px;
+            }
+
+            .video-title {
+                font-size: 16px;
+            }
+
+            .video-meta {
+                font-size: 12px;
+            }
+
+            .comment-input textarea {
+                font-size: 12px;
+            }
+
+            .comment-avatar {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="top-bar">
+        <div class="logo">
+            <svg height="24" width="24" viewBox="0 0 24 24">
+                <path d="M3 5h18v14H3z" fill="#fff"/>
+                <path d="M10 9l6 3-6 3z" fill="#f00"/>
+            </svg>
+            <span>YouTube</span>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search">
+            <button class="search-btn"><i class="bi bi-search"></i></button>
+        </div>
+        <div class="user-actions">
+            <i class="bi bi-camera-video"></i>
+            <i class="bi bi-bell"></i>
+            <i class="bi bi-person-circle"></i>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-item"><i class="bi bi-house-door"></i> <span>Home</span></div>
+            <div class="sidebar-item"><i class="bi bi-fire"></i> <span>Trending</span></div>
+            <div class="sidebar-item"><i class="bi bi-collection-play"></i> <span>Subscriptions</span></div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-item"><i class="bi bi-collection"></i> <span>Library</span></div>
+            <div class="sidebar-item"><i class="bi bi-clock-history"></i> <span>History</span></div>
+            <div class="sidebar-item"><i class="bi bi-clock"></i> <span>Watch Later</span></div>
+            <div class="sidebar-item"><i class="bi bi-hand-thumbs-up"></i> <span>Liked Videos</span></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="video-section">
+            <video class="video-player" controls>
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h2 class="video-title">Sample Video Title</h2>
+            <div class="video-actions">
+                <div class="video-meta">1M views • 2 days ago</div>
+                <div class="action-buttons">
+                    <button class="action-btn"><i class="bi bi-hand-thumbs-up"></i> <span>10K</span></button>
+                    <button class="action-btn"><i class="bi bi-hand-thumbs-down"></i> <span>500</span></button>
+                    <button class="action-btn"><i class="bi bi-share"></i> <span>Share</span></button>
+                    <button class="action-btn"><i class="bi bi-bookmark"></i> <span>Save</span></button>
+                    <button class="action-btn"><i class="bi bi-three-dots"></i> <span>More</span></button>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="comments-section">
+                <div class="comment-count">1,234 Comments</div>
+                <div class="comment-input">
+                    <textarea placeholder="Add a public comment..." rows="2"></textarea>
+                </div>
+                <div class="comment">
+                    <div class="comment-avatar"></div>
+                    <div class="comment-content">
+                        <p><strong>User123</strong> • 2 days ago</p>
+                        <p>Great video! Love the content.</p>
+                    </div>
+                </div>
+                <div class="comment">
+                    <div class="comment-avatar"></div>
+                    <div class="comment-content">
+                        <p><strong>Viewer456</strong> • 1 day ago</p>
+                        <p>Could use more details, but still good!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Videos -->
+        <div class="related-videos">
+            <div class="video-item" onclick="playVideo('https://www.w3schools.com/html/mov_bbb.mp4', 'Sample Video 1', '1M views • 2 days ago')">
+                <div class="thumbnail"></div>
+                <div class="video-info">
+                    <h3>Sample Video 1</h3>
+                    <p>Channel Name</p>
+                    <p>1M views • 2 days ago</p>
+                </div>
+            </div>
+            <div class="video-item" onclick="playVideo('https://www.w3schools.com/html/movie.mp4', 'Sample Video 2', '500K views • 1 week ago')">
+                <div class="thumbnail"></div>
+                <div class="video-info">
+                    <h3>Sample Video 2</h3>
+                    <p>Channel Name</p>
+                    <p>500K views • 1 week ago</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function playVideo(url, title, meta) {
+            const videoPlayer = document.querySelector('.video-player');
+            const videoTitle = document.querySelector('.video-title');
+            const videoMeta = document.querySelector('.video-meta');
+            
+            videoPlayer.src = url;
+            videoTitle.textContent = title;
+            videoMeta.textContent = meta;
+            videoPlayer.play();
+        }
+
+        const searchBox = document.querySelector('.search-box');
+        searchBox.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                console.log('Searching for:', this.value);
+            }
+        });
+
+        // Like/Dislike toggle
+        const likeBtn = document.querySelector('.action-btn:nth-child(1)');
+        const dislikeBtn = document.querySelector('.action-btn:nth-child(2)');
+        likeBtn.addEventListener('click', () => {
+            likeBtn.style.color = likeBtn.style.color === 'rgb(6, 95, 212)' ? '#606060' : '#065fd4';
+            dislikeBtn.style.color = '#606060';
+        });
+        dislikeBtn.addEventListener('click', () => {
+            dislikeBtn.style.color = dislikeBtn.style.color === 'rgb(6, 95, 212)' ? '#606060' : '#065fd4';
+            likeBtn.style.color = '#606060';
+        });
+    </script>
+</body>
+</html>
